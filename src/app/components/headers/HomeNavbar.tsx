@@ -1,38 +1,20 @@
 import { Button } from "@mui/material";
-import { Box, Container, Stack } from "@mui/system";
+import { Box, Container, Stack, width } from "@mui/system";
 import { NavLink } from "react-router-dom";
 
 export function HomeNavbar() {
   const authMember = null;
   return (
     <div className="home-navbar">
-      <Container sx={{ mt: "55px", height: "642px" }}>
-        <Stack
-          sx={{
-            height: "50px",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
+      <Container className="navbar-container">
+        <Stack className="menu">
           <Box>
             <NavLink to="/">
-              <img
-                src="/icons/burak.svg"
-                alt="Logo"
-                style={{ width: "125px", height: "30px" }}
-              />
+              <img className="brand-logo" src="/icons/burak.svg" />
             </NavLink>
           </Box>
 
-          <Stack
-            sx={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              minWidth: "700px",
-              alignItems: "center",
-            }}
-          >
+          <Stack className="links">
             <Box className={"hover-line"}>
               <NavLink to="/" activeClassName={"underline"}>
                 Home
@@ -66,15 +48,16 @@ export function HomeNavbar() {
 
             {!authMember ? (
               <Box className={"hover-line"}>
-                <Button
-                  variant="contained"
-                  style={{ background: "#3776CC", color: "#f8f8ff" }}
-                >
+                <Button variant="contained" className="login-button">
                   Login
                 </Button>
               </Box>
             ) : (
-              <img />
+              <img
+                className="user-avatar"
+                src={"/icons/default-user.svg"}
+                aria-haspopup={"true"}
+              />
             )}
           </Stack>
         </Stack>
