@@ -5,7 +5,7 @@ import { Container } from "@mui/system";
 export default function ActiveUsers() {
   return (
     <div>
-      <Container>ActiveUsers</Container>;{" "}
+      <Container>ActiveUsers</Container>
     </div>
   );
 }

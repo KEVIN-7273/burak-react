@@ -55,7 +55,7 @@ export default function Footer() {
             {" "}
             <Stack>
               <Box>
-                <Box className={"foot-category-title"}>Bo'limlar</Box>
+                <Box className={"foot-category-title"}>Fields</Box>
                 <Box className={"foot-category-link"}>
                   <Link to="/">Home</Link>
                   <Link to="/products">Products</Link>
@@ -66,7 +66,7 @@ export default function Footer() {
             </Stack>
             <Stack sx={{ ml: "100px" }}>
               <Box>
-                <Box className={"foot-category-title"}>Find us</Box>
+                <Box className={"foot-category-title"}>Contact us</Box>
                 <Box
                   sx={{
                     mt: "20px",
@@ -75,29 +75,22 @@ export default function Footer() {
                   }}
                   className="foot-category-link"
                 >
-                  <Box
-                    sx={{
-                      flexDirection: "row",
-                    }}
-                    className="find-us"
-                  >
+                  <Box className="find-us">
                     <span>L.</span>
                     <div>Downtown, Dubai</div>
-                  </Box>{" "}
-                  <span>L.</span>
-                  <div>Downtown, Dubai</div>
-                </Box>
-                <Box className={"find-us"}>
-                  <span>P.</span>
-                  <div>+971 4 554 7777</div>
-                </Box>
-                <Box className={"find-us"}>
-                  <span>E.</span>
-                  <div>devexuz@gmail.com</div>
-                </Box>
-                <Box className={"find-us"}>
-                  <span>H.</span>
-                  <div>Visit 24 hours</div>
+                  </Box>
+                  <Box className={"find-us"}>
+                    <span>P.</span>
+                    <div>+971 4 554 7777</div>
+                  </Box>
+                  <Box className={"find-us"}>
+                    <span>E.</span>
+                    <div>devexuz@gmail.com</div>
+                  </Box>
+                  <Box className={"find-us"}>
+                    <span>H.</span>
+                    <div>Visit 24 hours</div>
+                  </Box>
                 </Box>
               </Box>
             </Stack>

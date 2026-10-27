@@ -77,6 +77,8 @@ export default function PopularDishes() {
                         px: "var(--Card-padding)",
                         borderTop: "1px solid",
                         height: "60px",
+                        background:
+                          "linear-gradient(180deg, rgba(0, 0, 0, 0.02) 0%, rgba(0, 0, 0, 0.55) 25%, rgba(0, 0, 0, 0.51) 44.27%, #000 100%)",
                       }}
                     >
                       <Typography
