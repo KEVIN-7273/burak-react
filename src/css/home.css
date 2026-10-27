@@ -220,7 +220,7 @@
   display: flex;
   overflow: hidden;
   transform: perspective(0px);
-  box-shadow: -3px 0px 20px 14px #34343480;
+  box-shadow: -3px 0px 20px 14px #343434;
 }
 
 .homepage .ads-restaurant-frame .ads-video {
