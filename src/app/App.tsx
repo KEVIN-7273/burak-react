@@ -9,6 +9,7 @@ import HomeNavbar from "./components/headers/HomeNavbar";
 import OtherNavbar from "./components/headers/OtherNavbar";
 import Footer from "./components/footer";
 import HelpPage from "./screens/helpPage";
+import Test from "./screens/Test";
 
 import "../css/app.css";
 import "../css/navbar.css";
@@ -33,7 +34,8 @@ function App() {
           <HelpPage />
         </Route>
         <Route path="/">
-          <HomePage />
+          <Test />
+          {/* <HomePage /> */}
         </Route>
       </Switch>
       <Footer />
