@@ -17,5 +17,5 @@ const DividerComponent = styled.span<IDividerProps>`
 function Divider(props: IDividerProps) {
   return <DividerComponent {...props} />;
 }
-// zx
+// zxt
 export default Divider;
