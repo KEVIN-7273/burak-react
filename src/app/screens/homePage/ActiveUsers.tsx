@@ -16,7 +16,7 @@ const activeUsers = [
 
 export default function ActiveUsers() {
   return (
-    <div className={"new-products-frame"}>
+    <div className={"active-users-frame"}>
       <Container>
         <Stack className={"main"}>
           <Box className={"category-title"}>Active Users!</Box>
@@ -33,8 +33,8 @@ export default function ActiveUsers() {
                         </AspectRatio>
                       </CardOverflow>
 
-                      <CardOverflow variant="soft" className="member-nickname">
-                        <Typography className={"title"}>
+                      <CardOverflow>
+                        <Typography className={"member-nickname"}>
                           {ele.memberName}
                         </Typography>
                       </CardOverflow>
