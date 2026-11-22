@@ -32,65 +32,69 @@
   margin-top: 80px;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
 }
 
-.products-page .products .top-text .text-main {
+.products-page .products .top-text p {
   position: relative;
   margin-left: 380px;
-  color: #343434;
-  font-family: "Roboto Serif";
-  font-size: 36px;
+  font-family: "Dancing Script";
   font-style: normal;
-  font-weight: 600;
-  line-height: normal;
+  font-weight: 700;
+  font-size: 36px;
+  line-height: 43px;
+  color: #343434;
 }
 
-.products-page .products .search-section {
+.products-page .products .single-search-big-box {
   position: relative;
-  width: 360px;
-  height: 28.541px;
+  width: 337px;
+  height: 33px;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
   align-items: center;
-  border-radius: 18.5px;
-  border: 1px solid #fff;
   background: #fffcfc;
-  box-shadow: 0 4px 4px 0 rgba(212, 212, 212, 0.25);
+  border: 1px solid #f8f8ff;
+  box-shadow: 0px 4px 4px rgba(213, 213, 213, 0.25);
+  border-radius: 18.5px;
   box-sizing: border-box;
 }
 
-.products-page .products .search-input {
+.products-page .products .single-search-form {
   position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
 
-  width: 100px;
-  height: 15px;
-
+.products-page .products .single-search-input {
+  position: relative;
+  width: 225px;
+  height: 30px;
   margin-left: 5px;
   margin-right: 5px;
   padding-left: 10px;
   display: flex;
-  flex-direction: row;
-  justify-content: center;
   border: none;
   border-radius: 10px 0px 0px 10px;
-  font-family: Quicksand;
-  font-size: 15px;
+  font-family: "GT Walsheim Pro";
   font-style: normal;
   font-weight: 400;
-  line-height: normal;
-  color: #4a4a4a;
+  font-size: 15px;
+  line-height: 26px;
+  color: #4f547b;
 }
 
-.products-page .products .button-search {
+.products-page .products .single-button-search {
   position: relative;
-  width: 106px;
-  height: 32px;
+  width: 100px;
+  height: 33px;
   color: #d7b586;
   display: flex;
-  border-radius: 18.5px;
+  border-radius: 18px;
   background: #343434;
 }
 

@@ -17,6 +17,7 @@ import ProductService from "../../services/ProductService";
 import { useDispatch, useSelector } from "react-redux";
 import { serverApi } from "../../../lib/config";
 import { useHistory } from "react-router-dom";
+import { CartItem } from "../../../lib/types/search";
 
 //**REDUX SLICE & SELECTOR */
 const actionDispatch = (dispatch: Dispatch) => ({
@@ -27,7 +28,12 @@ const productsRetriever = createSelector(retrieveProducts, (products) => ({
   products,
 }));
 
-export default function Products() {
+interface ProductsProps {
+  onAdd: (item: CartItem) => void;
+}
+
+export default function Products(props: ProductsProps) {
+  const { onAdd } = props;
   const { setProducts } = actionDispatch(useDispatch());
   const { products } = useSelector(productsRetriever);
 
@@ -95,13 +101,13 @@ export default function Products() {
         <Stack flexDirection={"column"} alignItems={"center"}>
           <Stack className={"avatar-big-box"}>
             <Stack className={"top-text"}>
-              <div className="text-main">Burak Restaurant</div>
+              <p>Burak Restaurant</p>
 
-              <Stack className={"search-section"}>
+              <Stack className={"single-search-big-box"}>
                 <input
-                  type={"text"}
-                  className={"search-input"}
-                  name={"search-from-page"}
+                  type={"search"}
+                  className={"single-search-input"}
+                  name={"singleResearch"}
                   placeholder={"Type here"}
                   value={searchText}
                   onChange={(e) => setSearchText(e.target.value)}
@@ -113,7 +119,7 @@ export default function Products() {
                 />
 
                 <Button
-                  className={"button-search"}
+                  className={"single-button-search"}
                   variant="contained"
                   endIcon={<SearchIcon />}
                   onClick={() => searchProductHandler(searchText)}
@@ -261,8 +267,20 @@ export default function Products() {
                         className={"product-img"}
                         sx={{ backgroundImage: `url(${imagePath})` }}
                       >
-                        <div className={"product-sale"}>{sizeVolume}</div>{" "}
-                        <Button className={"shop-btn"}>
+                        <div className={"product-sale"}>{sizeVolume}</div>
+                        <Button
+                          className={"shop-btn"}
+                          onClick={(e) => {
+                            onAdd({
+                              _id: product._id,
+                              quantity: 1,
+                              name: product.productName,
+                              price: product.productPrice,
+                              image: product.productImages[0],
+                            });
+                            e.stopPropagation();
+                          }}
+                        >
                           <img
                             src={"/icons/shopping-cart.svg"}
                             style={{ display: "flex" }}
