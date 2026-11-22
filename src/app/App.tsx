@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link, Route, Switch, useLocation } from "react-router-dom";
 import Container from "@mui/system";
 import HomePage from "./screens/homePage";
@@ -10,44 +10,35 @@ import OtherNavbar from "./components/headers/OtherNavbar";
 import Footer from "./components/footer";
 import HelpPage from "./screens/helpPage";
 import Test from "./screens/Test";
-import { CartItem } from "../lib/types/search";
+import useBasket from "./hooks/useBasket";
 import "../css/app.css";
 import "../css/navbar.css";
 import "../css/footer.css";
 
 function App() {
   const location = useLocation();
-  const cartJson: string | null = localStorage.getItem("cartData");
-  const currentCart = cartJson ? JSON.parse(cartJson) : [];
-  const [cartItems, setCartItems] = useState<CartItem[]>(currentCart);
+  const { onAdd, cartItems, onDelete, onDeleteAll, onRemove } = useBasket();
 
   /** HANDLERS **/
-
-  const onAdd = (input: CartItem) => {
-    const exist: any = cartItems.find(
-      (item: CartItem) => item._id === input._id,
-    );
-    if (exist) {
-      const cartUpdate = cartItems.map((item: CartItem) =>
-        item._id === input._id
-          ? { ...exist, quantity: exist.quantity + 1 }
-          : item,
-      );
-      setCartItems(cartUpdate);
-      localStorage.setItem("cartData", JSON.stringify(cartUpdate));
-    } else {
-      const cartUpdate = [...cartItems, { ...input }];
-      setCartItems(cartUpdate);
-      localStorage.setItem("cartData", JSON.stringify(cartUpdate));
-    }
-  };
 
   return (
     <>
       {location.pathname === "/" ? (
-        <HomeNavbar cartItems={cartItems} />
+        <HomeNavbar
+          cartItems={cartItems}
+          onAdd={onAdd}
+          onDelete={onDelete}
+          onDeleteAll={onDeleteAll}
+          onRemove={onRemove}
+        />
       ) : (
-        <OtherNavbar cartItems={cartItems} />
+        <OtherNavbar
+          cartItems={cartItems}
+          onAdd={onAdd}
+          onDelete={onDelete}
+          onDeleteAll={onDeleteAll}
+          onRemove={onRemove}
+        />
       )}
       <Switch>
         <Route path="/products">

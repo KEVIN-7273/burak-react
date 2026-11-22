@@ -7,9 +7,13 @@ import React, { useEffect, useState } from "react";
 import { CartItem } from "../../../lib/types/search";
 interface HomeNavbarProps {
   cartItems: CartItem[];
+  onDelete: (item: CartItem) => void;
+  onDeleteAll: () => void;
+  onRemove: (item: CartItem) => void;
+  onAdd: (item: CartItem) => void;
 }
 export default function HomeNavbar(props: HomeNavbarProps) {
-  const { cartItems } = props;
+  const { cartItems, onDelete, onDeleteAll, onRemove, onAdd } = props;
   const authMember = null;
   const [count, setCount] = useState<number>(0);
   const [value, setValue] = useState<boolean>(true);
@@ -68,7 +72,13 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                 Help
               </NavLink>
             </Box>
-            <Basket cartItems={cartItems} />
+            <Basket
+              cartItems={cartItems}
+              onDelete={onDelete}
+              onDeleteAll={onDeleteAll}
+              onRemove={onRemove}
+              onAdd={onAdd}
+            />
             {!authMember ? (
               <Box className={"hover-line"}>
                 <Button variant="contained" className="login-button">
