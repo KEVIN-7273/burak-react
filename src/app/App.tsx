@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, Route, Switch, useLocation } from "react-router-dom";
 import Container from "@mui/system";
 import HomePage from "./screens/homePage";
@@ -14,12 +14,22 @@ import useBasket from "./hooks/useBasket";
 import "../css/app.css";
 import "../css/navbar.css";
 import "../css/footer.css";
+import AuthenticationModal from "./components/auth";
 
 function App() {
   const location = useLocation();
   const { onAdd, cartItems, onDelete, onDeleteAll, onRemove } = useBasket();
+  const [signupOpen, setSignupOpen] = useState<boolean>(false);
+  const [loginOpen, setLoginOpen] = useState<boolean>(false);
 
-  /** HANDLERS **/
+  // HANDLERS
+
+  const handleSignupClose = () => {
+    setSignupOpen(false);
+  };
+  const handleLoginClose = () => {
+    setLoginOpen(false);
+  };
 
   return (
     <>
@@ -59,6 +69,12 @@ function App() {
         </Route>
       </Switch>
       <Footer />
+      <AuthenticationModal
+        signupOpen={signupOpen}
+        loginOpen={loginOpen}
+        handleLoginClose={handleLoginClose}
+        handleSignupClose={handleSignupClose}
+      />
     </>
   );
 }
