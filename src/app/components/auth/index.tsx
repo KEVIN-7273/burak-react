@@ -8,7 +8,7 @@ import styled from "styled-components";
 import LoginIcon from "@mui/icons-material/Login";
 import { Messages } from "../../../lib/config";
 import { sweetErrorHandling } from "../../../lib/sweetAlert";
-import { MemberInput } from "../../../lib/types/member";
+import { LoginInput, MemberInput } from "../../../lib/types/member";
 import MemberService from "../../services/MemberService";
 import { T } from "../../../lib/types/common";
 
@@ -67,6 +67,27 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
   const handlePasswordKeyDown = (e: T) => {
     if (e.key === "Enter" && signupOpen) {
       handleSignupRequest().then();
+    } else if (e.key === "Enter" && loginOpen) {
+      // Call the login request function (you need to implement this)
+      handleLoginRequest().then();
+    }
+  };
+  const handleLoginRequest = async () => {
+    try {
+      const isFullfll = memberNick !== "" && memberPassword !== "";
+      if (!isFullfll) throw new Error(Messages.error3);
+      const loginInput: LoginInput = {
+        memberNick: memberNick,
+        memberPassword: memberPassword,
+      };
+      console.log("Login input:", loginInput);
+      const member = new MemberService();
+      const result = await member.login(loginInput);
+      handleLoginClose();
+    } catch (error) {
+      console.error("Login error:", error);
+      handleLoginClose();
+      sweetErrorHandling(error).then();
     }
   };
 
@@ -92,7 +113,7 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
     } catch (error) {
       console.error("Signup error:", error);
       handleSignupClose();
-      sweetErrorHandling(error);
+      sweetErrorHandling(error).then();
     }
   };
 
@@ -193,6 +214,7 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
                 label="username"
                 variant="outlined"
                 sx={{ my: "10px" }}
+                onChange={handleUserName}
               />
 
               <TextField
@@ -200,12 +222,15 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
                 label={"password"}
                 variant={"outlined"}
                 type={"password"}
+                onChange={handlePassword}
+                onKeyDown={handlePasswordKeyDown}
               />
 
               <Fab
                 sx={{ marginTop: "27px", width: "120px" }}
                 variant={"extended"}
                 color={"primary"}
+                onClick={() => handleLoginRequest}
               >
                 <LoginIcon sx={{ mr: 1 }} />
                 Login
