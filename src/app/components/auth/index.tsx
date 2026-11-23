@@ -11,6 +11,7 @@ import { sweetErrorHandling } from "../../../lib/sweetAlert";
 import { LoginInput, MemberInput } from "../../../lib/types/member";
 import MemberService from "../../services/MemberService";
 import { T } from "../../../lib/types/common";
+import { useGlobals } from "../../hooks/useGlobal";
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -50,6 +51,7 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
   const [memberPhone, setMemberPhone] = useState<string>("");
   const [memberPassword, setMemberPassword] = useState<string>("");
 
+  const { authMember, setAuthMember } = useGlobals();
   /** HANDLERS **/
 
   const handleUserName = (e: T) => {
@@ -68,7 +70,6 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
     if (e.key === "Enter" && signupOpen) {
       handleSignupRequest().then();
     } else if (e.key === "Enter" && loginOpen) {
-      // Call the login request function (you need to implement this)
       handleLoginRequest().then();
     }
   };
@@ -83,6 +84,7 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
       console.log("Login input:", loginInput);
       const member = new MemberService();
       const result = await member.login(loginInput);
+      setAuthMember(result);
       handleLoginClose();
     } catch (error) {
       console.error("Login error:", error);
@@ -108,6 +110,7 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
 
       const member = new MemberService();
       const result = await member.signup(signupInput);
+      setAuthMember(result);
 
       handleSignupClose();
     } catch (error) {
@@ -230,7 +233,7 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
                 sx={{ marginTop: "27px", width: "120px" }}
                 variant={"extended"}
                 color={"primary"}
-                onClick={() => handleLoginRequest}
+                onClick={() => handleLoginRequest()}
               >
                 <LoginIcon sx={{ mr: 1 }} />
                 Login
