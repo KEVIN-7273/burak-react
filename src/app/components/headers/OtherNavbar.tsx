@@ -11,10 +11,20 @@ interface OtherNavbarProps {
   onDeleteAll: () => void;
   onRemove: (item: CartItem) => void;
   onAdd: (item: CartItem) => void;
+  setSignupOpen: (isOpen: boolean) => void;
+  setLoginOpen: (isOpen: boolean) => void;
 }
 
 export default function OtherNavbar(props: OtherNavbarProps) {
-  const { cartItems, onDelete, onDeleteAll, onRemove, onAdd } = props;
+  const {
+    cartItems,
+    onDelete,
+    onDeleteAll,
+    onRemove,
+    onAdd,
+    setSignupOpen,
+    setLoginOpen,
+  } = props;
   const authMember = null;
   return (
     <div className="other-navbar">
@@ -63,7 +73,12 @@ export default function OtherNavbar(props: OtherNavbarProps) {
             />
             {!authMember ? (
               <Box className={"hover-line"}>
-                <Button variant="contained" className="login-button">
+                <Button
+                  variant="contained"
+                  className="login-button"
+                  onClick={() => setLoginOpen(true)}
+                >
+                  {" "}
                   Login
                 </Button>
               </Box>

@@ -90,7 +90,7 @@ export default function ChosenProduct(props: ChosenProductsProps) {
                     className="slider-image"
                     src={imagePath}
                     alt={chosenProduct.productName}
-                  />{" "}
+                  />
                 </SwiperSlide>
               );
             })}
@@ -108,7 +108,7 @@ export default function ChosenProduct(props: ChosenProductsProps) {
               <div className={"evaluation-box"}>
                 <div className={"product-view"}>
                   <RemoveRedEyeIcon sx={{ mr: "10px" }} />
-                  <span>{chosenProduct?.productViews}</span>{" "}
+                  <span>{chosenProduct?.productViews}</span>
                 </div>
               </div>
             </Box>
@@ -116,11 +116,11 @@ export default function ChosenProduct(props: ChosenProductsProps) {
               {chosenProduct?.productDesc
                 ? chosenProduct?.productDesc
                 : "No description available."}
-            </p>{" "}
+            </p>
             <Divider height="1" width="100%" bg="#000000" />
             <div className={"product-price"}>
               <span>Price:</span>
-              <span>${chosenProduct?.productPrice}</span>{" "}
+              <span>${chosenProduct?.productPrice}</span>
             </div>
             <div className={"button-box"}>
               <Button
