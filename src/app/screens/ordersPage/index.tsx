@@ -4,13 +4,17 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
+
 import PausedOrders from "./PausedOrders";
 import ProcessOrders from "./ProcessOrders";
 import FinishedOrders from "./FinishedOrders";
+
 import "../../../css/order.css";
+
 import { useDispatch } from "react-redux";
 import { Order, OrderInquiry } from "../../../lib/types/order";
 import { setPausedOrders, setProcessOrders, setFinishedOrders } from "./slice";
+
 import { Dispatch } from "@reduxjs/toolkit";
 import { OrderStatus } from "../../../lib/enums/order.enum";
 import OrderService from "../../services/OrderService";
@@ -20,43 +24,60 @@ const actionDispatch = (dispatch: Dispatch) => ({
   setProcessOrders: (data: Order[]) => dispatch(setProcessOrders(data)),
   setFinishedOrders: (data: Order[]) => dispatch(setFinishedOrders(data)),
 });
+
 export default function OrdersPage() {
   const { setPausedOrders, setProcessOrders, setFinishedOrders } =
     actionDispatch(useDispatch());
 
   const [value, setValue] = useState("1");
+
+  const [orderBuilder, setOrderBuilder] = useState<Date>(new Date());
+
   const [orderInquiry, setOrderInquiry] = useState<OrderInquiry>({
     page: 1,
     limit: 10,
     orderStatus: OrderStatus.PAUSE,
   });
+
   useEffect(() => {
     const order = new OrderService();
+
     order
-      .getMyOrders({ ...orderInquiry, orderStatus: OrderStatus.PAUSE })
+      .getMyOrders({
+        ...orderInquiry,
+        orderStatus: OrderStatus.PAUSE,
+      })
       .then((data: Order[]) => {
         setPausedOrders(data);
       })
       .catch((err: any) => {
         console.error("Error fetching paused orders:", err);
       });
+
     order
-      .getMyOrders({ ...orderInquiry, orderStatus: OrderStatus.PROCESS })
+      .getMyOrders({
+        ...orderInquiry,
+        orderStatus: OrderStatus.PROCESS,
+      })
       .then((data: Order[]) => {
         setProcessOrders(data);
       })
       .catch((err: any) => {
         console.error("Error fetching process orders:", err);
       });
+
     order
-      .getMyOrders({ ...orderInquiry, orderStatus: OrderStatus.FINISH })
+      .getMyOrders({
+        ...orderInquiry,
+        orderStatus: OrderStatus.FINISH,
+      })
       .then((data: Order[]) => {
         setFinishedOrders(data);
       })
       .catch((err: any) => {
         console.error("Error fetching finished orders:", err);
       });
-  }, [orderInquiry]);
+  }, [orderInquiry, orderBuilder]);
 
   const handleChange = (e: SyntheticEvent, newValue: string) => {
     setValue(newValue);
@@ -81,9 +102,15 @@ export default function OrdersPage() {
                 </Tabs>
               </Box>
             </Box>
+
             <Stack className={"order-main-content"}>
               <PausedOrders />
-              <ProcessOrders />
+
+              <ProcessOrders
+                setValue={setValue}
+                setOrderBuilder={setOrderBuilder}
+              />
+
               <FinishedOrders />
             </Stack>
           </TabContext>
@@ -97,6 +124,7 @@ export default function OrdersPage() {
                   src={"/icons/default-user.svg"}
                   className={"order-user-avatar"}
                 />
+
                 <div className={"order-user-icon-box"}>
                   <img
                     src={"/icons/user-badge.svg"}
@@ -104,17 +132,22 @@ export default function OrdersPage() {
                   />
                 </div>
               </div>
+
               <span className={"order-user-name"}>Justin</span>
               <span className={"order-user-prof"}>User</span>
             </Box>
+
             <Box className={"liner"}></Box>
+
             <Box className={"order-user-address"}>
               <div style={{ display: "flex" }}>
                 <LocationOnIcon />
               </div>
+
               <div className={"spec-address-txt"}>South Korea, Busan</div>
             </Box>
           </Box>
+
           <Box className={"order-info-box"} sx={{ mt: "15px" }}>
             <input
               type={"text"}
@@ -122,6 +155,7 @@ export default function OrdersPage() {
               placeholder={"Card number : **** 4090 2002 7495"}
               className={"card-input"}
             />
+
             <div
               style={{
                 display: "flex",
@@ -135,6 +169,7 @@ export default function OrdersPage() {
                 placeholder={"07 / 24"}
                 className={"card-half-input"}
               />
+
               <input
                 type={"text"}
                 name={"cardCVV"}
@@ -142,12 +177,14 @@ export default function OrdersPage() {
                 className={"card-half-input"}
               />
             </div>
+
             <input
               type={"text"}
               name={"cardCreator"}
               placeholder={"Justin Robertson"}
               className={"card-input"}
             />
+
             <div className={"cards-box"}>
               <img src={"/icons/western-card.svg"} />
               <img src={"/icons/master-card.svg"} />

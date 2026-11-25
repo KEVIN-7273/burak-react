@@ -9,6 +9,7 @@ export interface OrderItemInput {
 }
 
 export interface OrderItem {
+  productData: any;
   _id: string;
   itemQuantity: number;
   itemPrice: number;

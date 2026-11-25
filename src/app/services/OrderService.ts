@@ -1,8 +1,16 @@
 import axios from "axios";
 import { serverApi } from "../../lib/config";
-import { Order, OrderItemInput, OrderInquiry } from "../../lib/types/order";
+import {
+  Order,
+  OrderItemInput,
+  OrderInquiry,
+  OrderUpdateInput,
+} from "../../lib/types/order";
 import { CartItem } from "../../lib/types/search";
 class OrderService {
+  updateOrder(input: OrderUpdateInput) {
+    throw new Error("Method not implemented.");
+  }
   private readonly path: string;
 
   constructor() {

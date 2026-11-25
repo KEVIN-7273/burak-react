@@ -3,114 +3,134 @@ import { Box, Stack } from "@mui/material";
 import Button from "@mui/material/Button";
 import TabPanel from "@mui/lab/TabPanel";
 import moment from "moment";
-import { createSelector } from "@reduxjs/toolkit";
 import { useSelector } from "react-redux";
-import { serverApi } from "../../../lib/config";
-import { Order, OrderItem } from "../../../lib/types/order";
-import { Product } from "../../../lib/types/product";
+import { createSelector } from "reselect";
 import { retrieveProcessOrders } from "./selector";
+import { Order, OrderItem, OrderUpdateInput } from "../../../lib/types/order";
+import { Messages, serverApi } from "../../../lib/config";
+import { useGlobals } from "../../hooks/useGlobal";
+import { T } from "../../../lib/types/common";
+import { OrderStatus } from "../../../lib/enums/order.enum";
+import OrderService from "../../services/OrderService";
+import { sweetErrorHandling } from "../../../lib/sweetAlert";
 
+/** REDUX SLICE & SELECTOR */
 const processOrdersRetriever = createSelector(
   retrieveProcessOrders,
   (processOrders) => ({ processOrders }),
 );
 
-export default function ProcessOrders() {
+interface ProcessOrdersProps {
+  setValue: (input: string) => void;
+  setOrderBuilder: (input: Date) => void;
+}
+
+export default function ProcessOrders(props: ProcessOrdersProps) {
+  const { setValue, setOrderBuilder } = props;
+  const { authMember } = useGlobals();
+
   const { processOrders } = useSelector(processOrdersRetriever);
+  const orders = Array.isArray(processOrders) ? processOrders : [];
+
+  /** HANDLERS */
+  const finishOrderHandler = async (e: T) => {
+    try {
+      if (!authMember) throw new Error(Messages.error2);
+
+      const orderId = e.currentTarget.value;
+
+      const input: OrderUpdateInput = {
+        orderId: orderId,
+        orderStatus: OrderStatus.FINISH,
+      };
+
+      const confirmation = window.confirm("Have you received your order?");
+
+      if (confirmation) {
+        const order = new OrderService();
+        await order.updateOrder(input);
+
+        setValue("3");
+        setOrderBuilder(new Date());
+      }
+    } catch (err) {
+      console.log(err);
+      sweetErrorHandling(err).then();
+    }
+  };
 
   return (
     <TabPanel value={"2"}>
       <Stack>
-        {processOrders.length > 0
-          ? processOrders.map((order: Order) => {
-              return (
-                <Box key={order._id} className="order-main-box">
-                  <Box className={"order-box-scroll"}>
-                    {order.orderItems.map((item: OrderItem) => {
-                      const product: Product = order.productData.filter(
-                        (ele: Product) => ele._id === item.productId,
-                      )[0];
+        {orders.map((order: Order) => {
+          return (
+            <Box key={order._id} className={"order-main-box"}>
+              <Box className={"order-box-scroll"}>
+                {order?.orderItems?.map((item: OrderItem) => {
+                  const product = item.productData?.[0];
+                  const productImage = product?.productImages?.[0];
 
-                      const imagePath = `${serverApi}/${product.productImages[0]}`;
+                  if (!product || !productImage) return null;
 
-                      return (
-                        <Box key={product._id} className="orders-name-price">
-                          <img
-                            src={imagePath}
-                            alt={product.productName}
-                            className="order-dish-img"
-                          />
-                          <p className="title-dish">{product.productName}</p>
+                  const imagePath = `${serverApi}/${productImage}`;
 
-                          <Box className={"price-box"}>
-                            <p>${item.itemPrice}</p>
-                            <img src="/icons/close.svg" alt="" />
-                            <p>{item.itemQuantity}</p>
-                            <img src="/icons/pause.svg" alt="" />
-                            <p style={{ marginLeft: "15px" }}>
-                              ${item.itemPrice * item.itemQuantity}
-                            </p>
-                          </Box>
-                        </Box>
-                      );
-                    })}
-                  </Box>
+                  return (
+                    <Box key={item._id} className={"orders-name-price"}>
+                      <img src={imagePath} className={"order-dish-img"} />
+                      <p className={"title-dish"}>{product.productName}</p>
 
-                  <Box className={"total-price-box"}>
-                    <Box className={"box-total"}>
-                      <p>Product price</p>
-                      <p>
-                        $
-                        {order.orderItems.reduce(
-                          (
-                            total: number,
-                            item: {
-                              itemPrice: number;
-                              itemQuantity: number;
-                            },
-                          ) => total + item.itemPrice * item.itemQuantity,
-                          0,
-                        )}
-                      </p>
+                      <Box className={"price-box"}>
+                        <p>${item.itemPrice}</p>
+                        <img src={"/icons/close.svg"} />
+                        <p>{item.itemQuantity}</p>
+                        <img src={"/icons/pause.svg"} />
 
-                      <img
-                        src={"/icons/plus.svg"}
-                        style={{ marginLeft: "20px" }}
-                      />
-
-                      <p>delivery cost</p>
-                      <p>${order.orderDelivery}</p>
-
-                      <img
-                        src={"/icons/pause.svg"}
-                        style={{ marginLeft: "20px" }}
-                      />
-
-                      <p>Total</p>
-                      <p>
-                        $
-                        {order.orderItems.reduce(
-                          (total, item) =>
-                            total + item.itemPrice * item.itemQuantity,
-                          0,
-                        ) + order.orderDelivery}
-                      </p>
+                        <p style={{ marginLeft: "15px" }}>
+                          ${item.itemQuantity * item.itemPrice}
+                        </p>
+                      </Box>
                     </Box>
+                  );
+                })}
+              </Box>
 
-                    <p className={"data-compl"}>
-                      {moment().format("YY-MM-DD HH:mm")}
-                    </p>
+              <Box className={"total-price-box"}>
+                <Box className={"box-total"}>
+                  <p>Product price</p>
+                  <p>${order.orderTotal - order.orderDelivery}</p>
 
-                    <Button variant="contained" className={"verify-button"}>
-                      Verify to Fulfil
-                    </Button>
-                  </Box>
+                  <img src={"/icons/plus.svg"} style={{ marginLeft: "20px" }} />
+
+                  <p>delivery cost</p>
+                  <p>${order.orderDelivery}</p>
+
+                  <img
+                    src={"/icons/pause.svg"}
+                    style={{ marginLeft: "20px" }}
+                  />
+
+                  <p>Total</p>
+                  <p>${order.orderTotal}</p>
                 </Box>
-              );
-            })
-          : null}
 
-        {false && (
+                <p className={"data-compl"}>
+                  {moment(order.createdAt).format("YY-MM-DD HH:mm")}
+                </p>
+
+                <Button
+                  value={order._id}
+                  variant="contained"
+                  className={"verify-button"}
+                  onClick={finishOrderHandler}
+                >
+                  Verify to Fulfil
+                </Button>
+              </Box>
+            </Box>
+          );
+        })}
+
+        {orders.length === 0 && (
           <Box display={"flex"} flexDirection={"row"} justifyContent={"center"}>
             <img
               src={"/icons/noimage-list.svg"}
