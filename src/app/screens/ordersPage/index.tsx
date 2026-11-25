@@ -104,7 +104,7 @@ export default function OrdersPage() {
             </Box>
 
             <Stack className={"order-main-content"}>
-              <PausedOrders />
+              <PausedOrders setValue={setValue} />
 
               <ProcessOrders
                 setValue={setValue}

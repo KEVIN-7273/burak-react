@@ -9,7 +9,6 @@ export interface OrderItemInput {
 }
 
 export interface OrderItem {
-  productData: any;
   _id: string;
   itemQuantity: number;
   itemPrice: number;
@@ -17,6 +16,7 @@ export interface OrderItem {
   productId: string;
   createdAt: Date;
   updatedAt: Date;
+  productData?: Product[];
 }
 
 export interface Order {
@@ -27,16 +27,15 @@ export interface Order {
   memberId: string;
   createdAt: Date;
   updatedAt: Date;
+  //**from aggregations */
   orderItems: OrderItem[];
-  productData: Product[];
 }
 
 export interface OrderInquiry {
   page: number;
   limit: number;
-  orderStatus?: OrderStatus;
+  orderStatus: OrderStatus;
 }
-
 export interface OrderUpdateInput {
   orderId: string;
   orderStatus: OrderStatus;

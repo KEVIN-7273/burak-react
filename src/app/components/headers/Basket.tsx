@@ -1,35 +1,50 @@
 import React from "react";
-import { Box, Button, cardActionAreaClasses, Stack } from "@mui/material";
+import { Box, Button, Stack } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import Badge from "@mui/material/Badge";
 import Menu from "@mui/material/Menu";
-import CancelIcon from "@mui/icons-material/Cancel";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import CancelIconModule from "@mui/icons-material/Cancel";
+import ShoppingCartIconModule from "@mui/icons-material/ShoppingCart";
 import { useHistory } from "react-router-dom";
 import { CartItem } from "../../../lib/types/search";
 import { Messages, serverApi } from "../../../lib/config";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import DeleteForeverIconModule from "@mui/icons-material/DeleteForever";
 import { useGlobals } from "../../hooks/useGlobal";
 import { sweetErrorHandling } from "../../../lib/sweetAlert";
 import OrderService from "../../services/OrderService";
 
+const CancelIcon = (
+  CancelIconModule as unknown as { default: typeof CancelIconModule }
+).default;
+const ShoppingCartIcon = (
+  ShoppingCartIconModule as unknown as {
+    default: typeof ShoppingCartIconModule;
+  }
+).default;
+const DeleteForeverIcon = (
+  DeleteForeverIconModule as unknown as {
+    default: typeof DeleteForeverIconModule;
+  }
+).default;
+
 interface BasketProps {
   cartItems: CartItem[];
+  onAdd: (item: CartItem) => void;
+  onRemove: (item: CartItem) => void;
   onDelete: (item: CartItem) => void;
   onDeleteAll: () => void;
-  onRemove: (item: CartItem) => void;
-  onAdd: (item: CartItem) => void;
 }
 export default function Basket(props: BasketProps) {
-  const { cartItems, onDelete, onDeleteAll, onRemove, onAdd } = props;
-  const { authMember } = useGlobals();
+  const { cartItems, onAdd, onRemove, onDelete, onDeleteAll } = props;
+  const { authMember, setOrderBuilder } = useGlobals();
   const history = useHistory();
-  const itemPrice: number = cartItems.reduce(
+  const itemsPrice: number = cartItems.reduce(
     (a: number, c: CartItem) => a + c.quantity * c.price,
     0,
   );
-  const shippingCost: number = itemPrice < 100 ? 5 : 0;
-  const totalPrice = (itemPrice + shippingCost).toFixed(1);
+
+  const shippingCost: number = itemsPrice < 100 ? 5 : 0;
+  const totalPrice = (itemsPrice + shippingCost).toFixed(1);
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -44,10 +59,15 @@ export default function Basket(props: BasketProps) {
 
   const proceedOrderHandler = async () => {
     try {
+      handleClose();
       if (!authMember) throw new Error(Messages.error2);
+
       const order = new OrderService();
       await order.createOrder(cartItems);
+
       onDeleteAll();
+      // REFRESH VIA CONTEXT
+      setOrderBuilder(new Date());
       history.push("/orders");
     } catch (err) {
       console.log(err);
@@ -69,38 +89,35 @@ export default function Basket(props: BasketProps) {
           <img src={"/icons/shopping-cart.svg"} />
         </Badge>
       </IconButton>
-
       <Menu
         anchorEl={anchorEl}
         id="account-menu"
         open={open}
         onClose={handleClose}
         // onClick={handleClose}
-        slotProps={{
-          paper: {
-            elevation: 0,
-            sx: {
-              overflow: "visible",
-              filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-              mt: 1.5,
-              "& .MuiAvatar-root": {
-                width: 32,
-                height: 32,
-                ml: -0.5,
-                mr: 1,
-              },
-              "&:before": {
-                content: '""',
-                display: "block",
-                position: "absolute",
-                top: 0,
-                right: 14,
-                width: 10,
-                height: 10,
-                bgcolor: "background.paper",
-                transform: "translateY(-50%) rotate(45deg)",
-                zIndex: 0,
-              },
+        PaperProps={{
+          elevation: 0,
+          sx: {
+            overflow: "visible",
+            filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+            mt: 1.5,
+            "& .MuiAvatar-root": {
+              width: 32,
+              height: 32,
+              ml: -0.5,
+              mr: 1,
+            },
+            "&:before": {
+              content: '""',
+              display: "block",
+              position: "absolute",
+              top: 0,
+              right: 14,
+              width: 10,
+              height: 10,
+              bgcolor: "background.paper",
+              transform: "translateY(-50%) rotate(45deg)",
+              zIndex: 0,
             },
           },
         }}
@@ -135,11 +152,7 @@ export default function Basket(props: BasketProps) {
                         onClick={() => onDelete(item)}
                       />
                     </div>
-                    <img
-                      src={imagePath}
-                      className={"product-img"}
-                      alt="Product"
-                    />
+                    <img src={imagePath} className={"product-img"} />
                     <span className={"product-name"}>{item.name}</span>
                     <p className={"product-price"}>
                       ${item.price} x {item.quantity}
@@ -151,7 +164,7 @@ export default function Basket(props: BasketProps) {
                           className="remove"
                         >
                           -
-                        </button>
+                        </button>{" "}
                         <button onClick={() => onAdd(item)} className="add">
                           +
                         </button>
@@ -165,12 +178,12 @@ export default function Basket(props: BasketProps) {
           {cartItems.length !== 0 ? (
             <Box className={"basket-order"}>
               <span className={"price"}>
-                Total: ${totalPrice} ({itemPrice} + {shippingCost} )
+                Total: ${totalPrice} ({itemsPrice} + {shippingCost})
               </span>
               <Button
+                onClick={proceedOrderHandler}
                 startIcon={<ShoppingCartIcon />}
                 variant={"contained"}
-                onClick={proceedOrderHandler}
               >
                 Order
               </Button>

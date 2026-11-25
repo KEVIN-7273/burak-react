@@ -9,13 +9,19 @@ const ContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     return memberData ? JSON.parse(memberData) : null;
   });
 
-  console.log("Current authMember:", authMember);
+  const [orderBuilder, setOrderBuilder] = useState<Date>(new Date());
 
   return (
-    <GlobalContext.Provider value={{ authMember, setAuthMember }}>
+    <GlobalContext.Provider
+      value={{ authMember, setAuthMember, orderBuilder, setOrderBuilder }}
+    >
       {children}
     </GlobalContext.Provider>
   );
 };
 
 export default ContextProvider;
+
+function newDate(): Date | (() => Date) {
+  throw new Error("Function not implemented.");
+}
