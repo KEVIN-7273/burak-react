@@ -1,4 +1,4 @@
-import { useState, SyntheticEvent } from "react";
+import { useState, SyntheticEvent, useEffect } from "react";
 import { Container, Stack, Box } from "@mui/material";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -9,9 +9,11 @@ import ProcessOrders from "./ProcessOrders";
 import FinishedOrders from "./FinishedOrders";
 import "../../../css/order.css";
 import { useDispatch } from "react-redux";
-import { Order } from "../../../lib/types/order";
+import { Order, OrderInquiry } from "../../../lib/types/order";
 import { setPausedOrders, setProcessOrders, setFinishedOrders } from "./slice";
 import { Dispatch } from "@reduxjs/toolkit";
+import { OrderStatus } from "../../../lib/enums/order.enum";
+import OrderService from "../../services/OrderService";
 
 const actionDispatch = (dispatch: Dispatch) => ({
   setPausedOrders: (data: Order[]) => dispatch(setPausedOrders(data)),
@@ -23,6 +25,38 @@ export default function OrdersPage() {
     actionDispatch(useDispatch());
 
   const [value, setValue] = useState("1");
+  const [orderInquiry, setOrderInquiry] = useState<OrderInquiry>({
+    page: 1,
+    limit: 10,
+    orderStatus: OrderStatus.PAUSE,
+  });
+  useEffect(() => {
+    const order = new OrderService();
+    order
+      .getMyOrders({ ...orderInquiry, orderStatus: OrderStatus.PAUSE })
+      .then((data: Order[]) => {
+        setPausedOrders(data);
+      })
+      .catch((err: any) => {
+        console.error("Error fetching paused orders:", err);
+      });
+    order
+      .getMyOrders({ ...orderInquiry, orderStatus: OrderStatus.PROCESS })
+      .then((data: Order[]) => {
+        setProcessOrders(data);
+      })
+      .catch((err: any) => {
+        console.error("Error fetching process orders:", err);
+      });
+    order
+      .getMyOrders({ ...orderInquiry, orderStatus: OrderStatus.FINISH })
+      .then((data: Order[]) => {
+        setFinishedOrders(data);
+      })
+      .catch((err: any) => {
+        console.error("Error fetching finished orders:", err);
+      });
+  }, [orderInquiry]);
 
   const handleChange = (e: SyntheticEvent, newValue: string) => {
     setValue(newValue);

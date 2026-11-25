@@ -19,11 +19,11 @@ class MemberService {
       throw err;
     }
   }
+
   public async getRestaurant(): Promise<Member> {
     try {
       const url = this.path + "/member/restaurant";
       const result = await axios.get(url);
-      console.log("getRestaurant:", result);
 
       const restaurant: Member = result.data;
       return restaurant;
@@ -32,35 +32,48 @@ class MemberService {
       throw err;
     }
   }
+
   public async signup(input: MemberInput): Promise<Member> {
     try {
-      let url = this.path + "/member/signup";
-      const result = await axios.post(url, input, { withCredentials: true });
+      const url = this.path + "/member/signup";
+      const result = await axios.post(url, input, {
+        withCredentials: true,
+      });
+
       const member: Member = result.data.member;
       localStorage.setItem("memberData", JSON.stringify(member));
+
       return member;
     } catch (err) {
       console.error("Error, signup:", err);
       throw err;
     }
   }
+
   public async login(input: LoginInput): Promise<Member> {
     try {
-      let url = this.path + "/member/login";
-      const result = await axios.post(url, input, { withCredentials: true });
+      const url = this.path + "/member/login";
+      const result = await axios.post(url, input, {
+        withCredentials: true,
+      });
+
       const member: Member = result.data.member;
       localStorage.setItem("memberData", JSON.stringify(member));
+
       return member;
     } catch (err) {
       console.error("Error, login:", err);
       throw err;
     }
   }
+
   public async logout(): Promise<void> {
     try {
-      let url = this.path + "/member/logout";
+      const url = this.path + "/member/logout";
       const result = await axios.post(url, {}, { withCredentials: true });
+
       localStorage.removeItem("memberData");
+
       return result.data.logout;
     } catch (err) {
       console.error("Error, logout:", err);
