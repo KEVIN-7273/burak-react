@@ -18,6 +18,7 @@ import { setPausedOrders, setProcessOrders, setFinishedOrders } from "./slice";
 import { Dispatch } from "@reduxjs/toolkit";
 import { OrderStatus } from "../../../lib/enums/order.enum";
 import OrderService from "../../services/OrderService";
+import { useGlobals } from "../../hooks/useGlobal";
 
 const actionDispatch = (dispatch: Dispatch) => ({
   setPausedOrders: (data: Order[]) => dispatch(setPausedOrders(data)),
@@ -29,9 +30,10 @@ export default function OrdersPage() {
   const { setPausedOrders, setProcessOrders, setFinishedOrders } =
     actionDispatch(useDispatch());
 
-  const [value, setValue] = useState("1");
+  // GLOBAL orderBuilder (Basket, PausedOrders, ProcessOrders bilan bir xil)
+  const { orderBuilder } = useGlobals();
 
-  const [orderBuilder, setOrderBuilder] = useState<Date>(new Date());
+  const [value, setValue] = useState("1");
 
   const [orderInquiry, setOrderInquiry] = useState<OrderInquiry>({
     page: 1,
@@ -77,6 +79,7 @@ export default function OrdersPage() {
       .catch((err: any) => {
         console.error("Error fetching finished orders:", err);
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orderInquiry, orderBuilder]);
 
   const handleChange = (e: SyntheticEvent, newValue: string) => {
@@ -105,12 +108,7 @@ export default function OrdersPage() {
 
             <Stack className={"order-main-content"}>
               <PausedOrders setValue={setValue} />
-
-              <ProcessOrders
-                setValue={setValue}
-                setOrderBuilder={setOrderBuilder}
-              />
-
+              <ProcessOrders setValue={setValue} />
               <FinishedOrders />
             </Stack>
           </TabContext>
@@ -123,12 +121,14 @@ export default function OrdersPage() {
                 <img
                   src={"/icons/default-user.svg"}
                   className={"order-user-avatar"}
+                  alt="user"
                 />
 
                 <div className={"order-user-icon-box"}>
                   <img
                     src={"/icons/user-badge.svg"}
                     className={"order-user-prof-img"}
+                    alt="badge"
                   />
                 </div>
               </div>
@@ -186,10 +186,10 @@ export default function OrdersPage() {
             />
 
             <div className={"cards-box"}>
-              <img src={"/icons/western-card.svg"} />
-              <img src={"/icons/master-card.svg"} />
-              <img src={"/icons/paypal-card.svg"} />
-              <img src={"/icons/visa-card.svg"} />
+              <img src={"/icons/western-card.svg"} alt="western" />
+              <img src={"/icons/master-card.svg"} alt="master" />
+              <img src={"/icons/paypal-card.svg"} alt="paypal" />
+              <img src={"/icons/visa-card.svg"} alt="visa" />
             </div>
           </Box>
         </Stack>

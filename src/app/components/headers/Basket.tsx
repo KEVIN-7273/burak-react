@@ -3,29 +3,15 @@ import { Box, Button, Stack } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import Badge from "@mui/material/Badge";
 import Menu from "@mui/material/Menu";
-import CancelIconModule from "@mui/icons-material/Cancel";
-import ShoppingCartIconModule from "@mui/icons-material/ShoppingCart";
+import CancelIcon from "@mui/icons-material/Cancel";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { useHistory } from "react-router-dom";
 import { CartItem } from "../../../lib/types/search";
 import { Messages, serverApi } from "../../../lib/config";
-import DeleteForeverIconModule from "@mui/icons-material/DeleteForever";
 import { useGlobals } from "../../hooks/useGlobal";
 import { sweetErrorHandling } from "../../../lib/sweetAlert";
 import OrderService from "../../services/OrderService";
-
-const CancelIcon = (
-  CancelIconModule as unknown as { default: typeof CancelIconModule }
-).default;
-const ShoppingCartIcon = (
-  ShoppingCartIconModule as unknown as {
-    default: typeof ShoppingCartIconModule;
-  }
-).default;
-const DeleteForeverIcon = (
-  DeleteForeverIconModule as unknown as {
-    default: typeof DeleteForeverIconModule;
-  }
-).default;
 
 interface BasketProps {
   cartItems: CartItem[];
@@ -34,10 +20,12 @@ interface BasketProps {
   onDelete: (item: CartItem) => void;
   onDeleteAll: () => void;
 }
+
 export default function Basket(props: BasketProps) {
   const { cartItems, onAdd, onRemove, onDelete, onDeleteAll } = props;
   const { authMember, setOrderBuilder } = useGlobals();
   const history = useHistory();
+
   const itemsPrice: number = cartItems.reduce(
     (a: number, c: CartItem) => a + c.quantity * c.price,
     0,
@@ -66,6 +54,7 @@ export default function Basket(props: BasketProps) {
       await order.createOrder(cartItems);
 
       onDeleteAll();
+
       // REFRESH VIA CONTEXT
       setOrderBuilder(new Date());
       history.push("/orders");
@@ -86,15 +75,15 @@ export default function Basket(props: BasketProps) {
         onClick={handleClick}
       >
         <Badge badgeContent={cartItems.length} color="secondary">
-          <img src={"/icons/shopping-cart.svg"} />
+          <img src={"/icons/shopping-cart.svg"} alt="cart" />
         </Badge>
       </IconButton>
+
       <Menu
         anchorEl={anchorEl}
         id="account-menu"
         open={open}
         onClose={handleClose}
-        // onClick={handleClose}
         PaperProps={{
           elevation: 0,
           sx: {
@@ -152,7 +141,11 @@ export default function Basket(props: BasketProps) {
                         onClick={() => onDelete(item)}
                       />
                     </div>
-                    <img src={imagePath} className={"product-img"} />
+                    <img
+                      src={imagePath}
+                      className={"product-img"}
+                      alt={item.name}
+                    />
                     <span className={"product-name"}>{item.name}</span>
                     <p className={"product-price"}>
                       ${item.price} x {item.quantity}
@@ -175,6 +168,7 @@ export default function Basket(props: BasketProps) {
               })}
             </Box>
           </Box>
+
           {cartItems.length !== 0 ? (
             <Box className={"basket-order"}>
               <span className={"price"}>

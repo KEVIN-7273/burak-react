@@ -22,12 +22,11 @@ const processOrdersRetriever = createSelector(
 
 interface ProcessOrdersProps {
   setValue: (input: string) => void;
-  setOrderBuilder: (input: Date) => void;
 }
 
 export default function ProcessOrders(props: ProcessOrdersProps) {
-  const { setValue, setOrderBuilder } = props;
-  const { authMember } = useGlobals();
+  const { setValue } = props;
+  const { authMember, setOrderBuilder } = useGlobals();
 
   const { processOrders } = useSelector(processOrdersRetriever);
   const orders = Array.isArray(processOrders) ? processOrders : [];
@@ -76,14 +75,18 @@ export default function ProcessOrders(props: ProcessOrdersProps) {
 
                   return (
                     <Box key={item._id} className={"orders-name-price"}>
-                      <img src={imagePath} className={"order-dish-img"} />
+                      <img
+                        src={imagePath}
+                        className={"order-dish-img"}
+                        alt={product.productName}
+                      />
                       <p className={"title-dish"}>{product.productName}</p>
 
                       <Box className={"price-box"}>
                         <p>${item.itemPrice}</p>
-                        <img src={"/icons/close.svg"} />
+                        <img src={"/icons/close.svg"} alt="x" />
                         <p>{item.itemQuantity}</p>
-                        <img src={"/icons/pause.svg"} />
+                        <img src={"/icons/pause.svg"} alt="=" />
 
                         <p style={{ marginLeft: "15px" }}>
                           ${item.itemQuantity * item.itemPrice}
@@ -99,7 +102,11 @@ export default function ProcessOrders(props: ProcessOrdersProps) {
                   <p>Product price</p>
                   <p>${order.orderTotal - order.orderDelivery}</p>
 
-                  <img src={"/icons/plus.svg"} style={{ marginLeft: "20px" }} />
+                  <img
+                    src={"/icons/plus.svg"}
+                    style={{ marginLeft: "20px" }}
+                    alt="+"
+                  />
 
                   <p>delivery cost</p>
                   <p>${order.orderDelivery}</p>
@@ -107,6 +114,7 @@ export default function ProcessOrders(props: ProcessOrdersProps) {
                   <img
                     src={"/icons/pause.svg"}
                     style={{ marginLeft: "20px" }}
+                    alt="="
                   />
 
                   <p>Total</p>
@@ -135,6 +143,7 @@ export default function ProcessOrders(props: ProcessOrdersProps) {
             <img
               src={"/icons/noimage-list.svg"}
               style={{ width: 300, height: 300 }}
+              alt="no orders"
             />
           </Box>
         )}

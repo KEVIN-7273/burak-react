@@ -30,7 +30,6 @@ export default function Footer() {
               width: "340px",
             }}
           >
-            {" "}
             <Box>
               <img width={"100px"} src={"/icons/burak.svg"} />
             </Box>
