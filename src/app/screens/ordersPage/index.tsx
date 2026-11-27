@@ -4,21 +4,22 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
-
-import PausedOrders from "./PausedOrders";
 import ProcessOrders from "./ProcessOrders";
 import FinishedOrders from "./FinishedOrders";
-
 import "../../../css/order.css";
-
-import { useDispatch } from "react-redux";
+import PausedOrders from "./PausedOrders";
 import { Order, OrderInquiry } from "../../../lib/types/order";
-import { setPausedOrders, setProcessOrders, setFinishedOrders } from "./slice";
-
+import { useDispatch } from "react-redux";
 import { Dispatch } from "@reduxjs/toolkit";
+import { setFinishedOrders, setPausedOrders, setProcessOrders } from "./slice";
 import { OrderStatus } from "../../../lib/enums/order.enum";
 import OrderService from "../../services/OrderService";
 import { useGlobals } from "../../hooks/useGlobal";
+import { useHistory } from "react-router-dom";
+import { serverApi } from "../../../lib/config";
+import { MemberType } from "../../../lib/enums/member.enum";
+
+/** REDUX SLICE & SELECTOR */
 
 const actionDispatch = (dispatch: Dispatch) => ({
   setPausedOrders: (data: Order[]) => dispatch(setPausedOrders(data)),
@@ -27,17 +28,17 @@ const actionDispatch = (dispatch: Dispatch) => ({
 });
 
 export default function OrdersPage() {
+  const { orderBuilder, authMember } = useGlobals();
+  const history = useHistory();
+
   const { setPausedOrders, setProcessOrders, setFinishedOrders } =
     actionDispatch(useDispatch());
-
-  // GLOBAL orderBuilder (Basket, PausedOrders, ProcessOrders bilan bir xil)
-  const { orderBuilder } = useGlobals();
 
   const [value, setValue] = useState("1");
 
   const [orderInquiry, setOrderInquiry] = useState<OrderInquiry>({
     page: 1,
-    limit: 10,
+    limit: 5,
     orderStatus: OrderStatus.PAUSE,
   });
 
@@ -49,42 +50,33 @@ export default function OrdersPage() {
         ...orderInquiry,
         orderStatus: OrderStatus.PAUSE,
       })
-      .then((data: Order[]) => {
-        setPausedOrders(data);
-      })
-      .catch((err: any) => {
-        console.error("Error fetching paused orders:", err);
-      });
+      .then((data) => setPausedOrders(data))
+      .catch((err) => console.log(err));
 
     order
       .getMyOrders({
         ...orderInquiry,
         orderStatus: OrderStatus.PROCESS,
       })
-      .then((data: Order[]) => {
-        setProcessOrders(data);
-      })
-      .catch((err: any) => {
-        console.error("Error fetching process orders:", err);
-      });
+      .then((data) => setProcessOrders(data))
+      .catch((err) => console.log(err));
 
     order
       .getMyOrders({
         ...orderInquiry,
         orderStatus: OrderStatus.FINISH,
       })
-      .then((data: Order[]) => {
-        setFinishedOrders(data);
-      })
-      .catch((err: any) => {
-        console.error("Error fetching finished orders:", err);
-      });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+      .then((data) => setFinishedOrders(data))
+      .catch((err) => console.log(err));
   }, [orderInquiry, orderBuilder]);
+
+  /** HANDLERS */
 
   const handleChange = (e: SyntheticEvent, newValue: string) => {
     setValue(newValue);
   };
+
+  if (!authMember) history.push("/");
 
   return (
     <div className={"order-page"}>
@@ -119,22 +111,35 @@ export default function OrdersPage() {
             <Box className={"member-box"}>
               <div className={"order-user-img"}>
                 <img
-                  src={"/icons/default-user.svg"}
+                  src={
+                    authMember?.memberImage
+                      ? `${serverApi}/${authMember.memberImage}`
+                      : "/icons/default-user.svg"
+                  }
                   className={"order-user-avatar"}
                   alt="user"
                 />
 
                 <div className={"order-user-icon-box"}>
                   <img
-                    src={"/icons/user-badge.svg"}
+                    src={
+                      authMember?.memberType === MemberType.RESTAURANT
+                        ? "/icons/restaurant.svg"
+                        : "/icons/user-badge.svg"
+                    }
                     className={"order-user-prof-img"}
                     alt="badge"
                   />
                 </div>
               </div>
 
-              <span className={"order-user-name"}>Justin</span>
-              <span className={"order-user-prof"}>User</span>
+              <span className={"order-user-name"}>
+                {authMember?.memberNick}
+              </span>
+
+              <span className={"order-user-prof"}>
+                {authMember?.memberType}
+              </span>
             </Box>
 
             <Box className={"liner"}></Box>
@@ -144,7 +149,11 @@ export default function OrdersPage() {
                 <LocationOnIcon />
               </div>
 
-              <div className={"spec-address-txt"}>South Korea, Busan</div>
+              <div className={"spec-address-txt"}>
+                {authMember?.memberAddress
+                  ? authMember.memberAddress
+                  : "Do not exist"}
+              </div>
             </Box>
           </Box>
 
@@ -186,10 +195,10 @@ export default function OrdersPage() {
             />
 
             <div className={"cards-box"}>
-              <img src={"/icons/western-card.svg"} alt="western" />
-              <img src={"/icons/master-card.svg"} alt="master" />
-              <img src={"/icons/paypal-card.svg"} alt="paypal" />
-              <img src={"/icons/visa-card.svg"} alt="visa" />
+              <img src={"/icons/western-card.svg"} alt="western card" />
+              <img src={"/icons/master-card.svg"} alt="master card" />
+              <img src={"/icons/paypal-card.svg"} alt="paypal card" />
+              <img src={"/icons/visa-card.svg"} alt="visa card" />
             </div>
           </Box>
         </Stack>

@@ -1,6 +1,11 @@
 import { serverApi } from "../../lib/config";
 import axios from "axios";
-import { LoginInput, Member, MemberInput } from "../../lib/types/member";
+import {
+  LoginInput,
+  Member,
+  MemberInput,
+  MemberUpdateInput,
+} from "../../lib/types/member";
 
 class MemberService {
   private readonly path: string;
@@ -77,6 +82,28 @@ class MemberService {
       return result.data.logout;
     } catch (err) {
       console.error("Error, logout:", err);
+      throw err;
+    }
+  }
+  public async updateMember(input: MemberUpdateInput): Promise<Member> {
+    try {
+      const formData = new FormData();
+      formData.append("memberNick", input.memberNick || "");
+      formData.append("memberPhone", input.memberPhone || "");
+      formData.append("memberAddress", input.memberAddress || "");
+      formData.append("memberDesc", input.memberDesc || "");
+      formData.append("memberImage", input.memberImage || "");
+      const result = await axios(`${serverApi}/member/update`, {
+        method: "POST",
+        data: formData,
+        withCredentials: true,
+      });
+      console.log("updateMember:", result);
+      const member: Member = result.data;
+      localStorage.setItem("memberData", JSON.stringify(member));
+      return member;
+    } catch (err) {
+      console.log("Error, updateMember:", err);
       throw err;
     }
   }

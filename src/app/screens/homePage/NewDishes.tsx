@@ -62,7 +62,7 @@ export default function NewDishes() {
                             <Divider width="2" height="24" bg="#d9d9d9" />
 
                             <Typography className={"price"}>
-                              {product.productPrice}
+                              {product.productPrice}$
                             </Typography>
                           </Stack>
 
